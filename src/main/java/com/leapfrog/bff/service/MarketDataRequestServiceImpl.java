@@ -13,11 +13,9 @@ public class MarketDataRequestServiceImpl implements MarketDataRequestService {
 
     private final WebClient webClient;
 
-    @Value("${market-data.server}")
-    private String marketDataServer;
-
     @Autowired
-    public MarketDataRequestServiceImpl(WebClient.Builder webClientBuilder) {
+    public MarketDataRequestServiceImpl(WebClient.Builder webClientBuilder,
+                                        @Value("${market-data.server}") String marketDataServer) {
         String urlRoot = String.format("%s/api/v1/market-data/", marketDataServer);
         this.webClient = webClientBuilder.baseUrl(urlRoot).build();
     }
@@ -28,6 +26,7 @@ public class MarketDataRequestServiceImpl implements MarketDataRequestService {
                 .uri("data-request")
                 .bodyValue(requestConfiguration)
                 .retrieve()
-                .bodyToMono(Void.class);
+                .toBodilessEntity()
+                .then(Mono.empty());
     }
 }
