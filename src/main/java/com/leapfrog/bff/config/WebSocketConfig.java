@@ -1,6 +1,7 @@
 package com.leapfrog.bff.config;
 
-import com.leapfrog.bff.handlers.MarketDataWebSocketHandler;
+import com.leapfrog.bff.service.websocket.handlers.MarketDataWebSocketHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.HandlerMapping;
@@ -15,10 +16,17 @@ import java.util.Map;
 @Configuration
 public class WebSocketConfig {
 
+    private final MarketDataWebSocketHandler marketDataWebSocketHandler;
+
+    @Autowired
+    public WebSocketConfig(MarketDataWebSocketHandler marketDataWebSocketHandler){
+        this.marketDataWebSocketHandler = marketDataWebSocketHandler;
+    }
+
     @Bean
     public HandlerMapping handlerMapping() {
         Map<String, WebSocketHandler> map = new HashMap<>();
-        map.put("/market-data-ws", new MarketDataWebSocketHandler());
+        map.put("/market-data-ws", marketDataWebSocketHandler);
 
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setUrlMap(map);
