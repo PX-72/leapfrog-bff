@@ -32,8 +32,6 @@ public class MarketDataWebSocketHandler implements WebSocketHandler {
 
         logger.info("Socket is open? " + session.isOpen() + " Session ID: " + session.getId());
 
-        Mono<Void> output = session.send(Flux.just(session.textMessage("Hello from server")));
-
         // Keep the session open by processing incoming messages
         Flux<String> stringFlux = session.receive()
                 .map(WebSocketMessage::getPayloadAsText)
@@ -45,7 +43,6 @@ public class MarketDataWebSocketHandler implements WebSocketHandler {
                     logger.info("WebSocket session closed: " + session.getId());
                 });
 
-        // Combine output and stringFlux into a single sequence that completes when either completes
-        return output.and(stringFlux.then());
+        return stringFlux.then();
     }
 }
