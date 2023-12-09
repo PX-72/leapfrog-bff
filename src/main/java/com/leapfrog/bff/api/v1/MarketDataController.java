@@ -22,7 +22,7 @@ public class MarketDataController {
     }
 
     @PutMapping("/data-request")
-    Mono<Void> replaceEmployee(@RequestBody MarketDataRequestConfiguration requestConfiguration) {
+    Mono<Void> requestMarketData(@RequestBody MarketDataRequestConfiguration requestConfiguration) {
         logger.info("Market data request has been received: {}", requestConfiguration);
         return marketDataRequestService.RequestMarketData(requestConfiguration);
     }
