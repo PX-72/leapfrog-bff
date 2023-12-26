@@ -23,6 +23,7 @@ public class MarketDataWebSocketHandler implements WebSocketHandler {
         this.webSocketSessionContainer = webSocketSessionContainer;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public Mono<Void> handle(WebSocketSession session) {
 
