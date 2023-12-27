@@ -1,6 +1,6 @@
 package com.leapfrog.bff.service.websocket.publishers;
 
-import com.leapfrog.bff.service.interfaces.MarketDataWebSocketPublisher;
+import com.leapfrog.bff.service.interfaces.WsPublisher;
 import com.leapfrog.bff.service.websocket.WebSocketSessionContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,14 +13,14 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 @Service
-public class MarketDataWebSocketPublisherImpl implements MarketDataWebSocketPublisher {
+public class WsPublisherImpl implements WsPublisher {
 
-    private static final Logger logger = LoggerFactory.getLogger(MarketDataWebSocketPublisherImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(WsPublisherImpl.class);
 
     private final WebSocketSessionContainer webSocketSessionContainer;
 
     @Autowired
-    public MarketDataWebSocketPublisherImpl(WebSocketSessionContainer webSocketSessionContainer) {
+    public WsPublisherImpl(WebSocketSessionContainer webSocketSessionContainer) {
         this.webSocketSessionContainer = webSocketSessionContainer;
     }
 
@@ -31,6 +31,16 @@ public class MarketDataWebSocketPublisherImpl implements MarketDataWebSocketPubl
             WebSocketMessage webSocketMessage = session.textMessage(message);
             Mono<Void> sendMono = session.send(Mono.just(webSocketMessage));
             logger.info("Sending message: " + message);
+            sendMono.subscribe();
+        }
+    }
+
+    @Override
+    public void publish(String message, String sessionId) {
+        WebSocketSession session = webSocketSessionContainer.get(sessionId);
+        if (session != null) {
+            WebSocketMessage webSocketMessage = session.textMessage(message);
+            Mono<Void> sendMono = session.send(Mono.just(webSocketMessage));
             sendMono.subscribe();
         }
     }
